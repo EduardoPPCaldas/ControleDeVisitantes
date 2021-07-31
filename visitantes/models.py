@@ -51,6 +51,26 @@ class Visitante(models.Model):
     verbose_name="Porteiro responsável pelo registro",
     on_delete=models.PROTECT
   )
+  def get_horario_saida(self):
+    if self.horario_saida:
+      return self.horario_saida
+    return "Horário de saída não registrado"
+
+  def get_horario_autorizacao(self):
+    if self.horario_autorizacao:
+      return self.horario_autorizacao
+    return "Horário de autorização não registrado"
+
+  def get_morador_responsavel(self):
+    if self.morador_responsavel:
+      return self.morador_responsavel
+    return "Visitante aguardando autorização"
+  
+  def get_placa_veiculo(self):
+    if self.placa_veículo:
+      return self.placa_veículo
+    return "Veículo não registrado"
+
   class Meta:
     verbose_name = "Visitante"
     verbose_name_plural = "Visitantes"
@@ -58,3 +78,4 @@ class Visitante(models.Model):
 
   def __str__(self):
     return self.nome_completo
+    
