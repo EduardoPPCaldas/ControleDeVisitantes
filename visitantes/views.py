@@ -3,7 +3,9 @@ from django.shortcuts import (
   render, redirect , get_object_or_404
 )
 from visitantes.models import Visitante
-from visitantes.forms import VisitanteForm
+from visitantes.forms import (VisitanteForm , AutorizaVisitanteForm)
+
+from django.utils import timezone
 
 # Create your views here.
 def registrar_visitantes(request):
@@ -37,8 +39,31 @@ def informacoes_visitante(request , id):
     id=id
   )
 
+  form = AutorizaVisitanteForm()
+  if request.method == "POST":
+    form = AutorizaVisitanteForm(
+      request.POST,
+      instance=visitante
+    )
+  
+  if form.is_valid():
+    visitante = form.save(commit=False)
+
+    visitante.status = "EM_VISITA"
+    visitante.horario_autorizacao = timezone.now()
+
+    visitante.save()
+
+    messages.success(
+      request,
+      "Entrada de visitante autorizada com sucesso"
+    )
+
+    return redirect("index")
+
   context = {
     "nome_pagina" : "Informações do visitante",
-    "visitante" : visitante
+    "visitante" : visitante,
+    "form" : form
   }
   return render(request , "informacoes_visitante.html" , context)
